@@ -1,44 +1,44 @@
 package br.com.murilo.controllers;
 
+import br.com.murilo.data.vo.v1.PersonVO;
 import br.com.murilo.entities.Person;
 import br.com.murilo.services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/persons")
+@RequestMapping("/api/persons/v1")
 public class PersonController {
     @Autowired
     private PersonService personService;
 
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public List<Person> findAll() {
+    @GetMapping(produces = "application/json")
+    public List<PersonVO> findAll() {
         return personService.findAll();
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
-    public Person findOne(@PathVariable UUID id) {
+    @GetMapping(value = "/{id}", produces = "application/json")
+    public PersonVO findOne(@PathVariable UUID id) {
         return personService.findOne(id);
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-    public Person save(Person person) {
+    @PostMapping(produces = "application/json", consumes = "application/json")
+    public PersonVO save(@RequestBody PersonVO person) {
         return personService.save(person);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, produces = "application/json", consumes = "application/json")
-    public Person update(Person person) {
+    @PutMapping(produces = "application/json", consumes = "application/json")
+    public PersonVO update(PersonVO person) {
         return personService.update(person);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE,value = "/{id}",produces = "application/json")
-    public Person delete(@PathVariable UUID id) {
-        return personService.delete(id);
+    @DeleteMapping(value = "/{id}",produces = "application/json")
+    public ResponseEntity<?> delete(@PathVariable UUID id) {
+        personService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

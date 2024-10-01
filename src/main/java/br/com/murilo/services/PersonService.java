@@ -1,7 +1,9 @@
 package br.com.murilo.services;
 
+import br.com.murilo.data.vo.v1.PersonVO;
 import br.com.murilo.entities.Person;
 import br.com.murilo.exceptions.NotFoundException;
+import br.com.murilo.mapper.DozerMapper;
 import br.com.murilo.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,36 +19,35 @@ public class PersonService {
     @Autowired
     private PersonRepository personRepository;
 
-    public List<Person> findAll() {
+    public List<PersonVO> findAll() {
         logger.info("Finding all persons");
-        return personRepository.findAll();
+        return DozerMapper.parseListObjects(personRepository.findAll(), PersonVO.class);
     }
 
-    public Person findOne(UUID id) {
+    public PersonVO findOne(UUID id) {
         logger.info("Finding person by id: " + id);
-        return personRepository.findById(id).orElseThrow(() -> new NotFoundException("Person not found"));
+        return DozerMapper.parseObject(personRepository.findById(id).orElseThrow(() -> new NotFoundException("Person not found")), PersonVO.class);
     }
 
-    public Person save(Person person) {
+    public PersonVO save(PersonVO person) {
         logger.info("Saving person: " + person);
-        person.setId(UUID.randomUUID());
-        return personRepository.save(person);
+        Person entity = DozerMapper.parseObject(person, Person.class);
+        return DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
     }
 
-    public Person update(Person person) {
+    public PersonVO update(PersonVO person) {
         logger.info("Updating person");
-        Person entity =  personRepository.findById(person.getId()).orElseThrow(() -> new NotFoundException("Person not found"));
+        Person entity = personRepository.findById(person.getId()).orElseThrow(() -> new NotFoundException("Person not found"));
         entity.setEmail(person.getEmail());
         entity.setName(person.getName());
         entity.setPassword(person.getPassword());
-
-        return personRepository.save(person);
+        return DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
     }
 
-    public Person delete(UUID id) {
+    public PersonVO delete(UUID id) {
         logger.info("Deleting person by id: " + id);
         Person entity = personRepository.findById(id).orElseThrow(() -> new NotFoundException("Person not found"));
         personRepository.delete(entity);
-        return entity;
+        return DozerMapper.parseObject(entity, PersonVO.class);
     }
 }
