@@ -1,16 +1,22 @@
 package br.com.murilo.data.vo.v1;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.github.dozermapper.core.Mapping;
+import org.springframework.hateoas.RepresentationModel;
+
 import java.util.UUID;
 
-public class PersonVO {
-    private UUID id;
+public class PersonVO extends RepresentationModel<PersonVO> {
+    @Mapping("id")
+    private UUID userId;
     private String name;
     private String email;
     private String password;
-    public UUID getId() {
-        return id;
+    public UUID getUserId() {
+        return userId;
     }
     public void setId(UUID id) {
-        this.id = id;
+        this.userId = id;
     }
     public String getName() {
         return name;
